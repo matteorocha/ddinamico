@@ -5,8 +5,8 @@
 
 union u_medida
 {
-        int luminosidade;
-        int umidade;
+        int luminosidade; // media da luminosidade
+        int umidade; // media da umidade
         int movimento;
         double temperatura;
 };
@@ -92,7 +92,17 @@ int main(){
         inserir_dd(medidas,chave,novo);
 
         t_medida_sensor* recuperado = buscar_dd(medidas,chave);
-
+        if (recuperado == NULL)
+        {
+            inserir_dd(medidas, chave, novo);
+        }
+        else
+        {
+            // tratar a repetição.
+            // Calcular um valor meio para a referida medição.
+            // Média simples, media ponderada
+        }
+        recuperado = buscar_dd(medidas,chave);
         mostrar_medida_sensor(recuperado);
     }
 }
