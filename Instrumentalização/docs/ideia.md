@@ -1,3 +1,5 @@
+Informações do Copilot sobre a "implementação" (em trabalho):
+
 1. **Número médio de comparações para concluir uma busca/remoção no dicionário**: Para isso, você pode adicionar um contador no código que realiza a busca/remoção. Este contador incrementaria cada vez que uma comparação é feita. Você precisaria garantir que este contador seja reiniciado para cada nova busca/remoção. Ao final de cada operação, você poderia adicionar o valor do contador a uma soma total de comparações e incrementar um contador de operações. O número médio de comparações seria então a soma total de comparações dividida pelo número de operações.
 
 2. **Porcentagem de entradas que têm FC (fator de carga) maior/menor que o definido para o dicionário**: Para calcular isso, você precisaria manter um registro do número total de entradas no dicionário e do número de entradas que têm um FC maior/menor que o valor definido. A porcentagem seria então o número de entradas com FC maior/menor dividido pelo número total de entradas.
