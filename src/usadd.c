@@ -62,7 +62,7 @@ long int criar_chave(t_medida_sensor *m)
     return chave;
 }
 
-int main(){
+int main(){ // ahhjhjdhjhdjhdjhjdhj
     int sensor, hora, min, seg;
     union u_medida medida;
     
