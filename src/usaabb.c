@@ -38,7 +38,30 @@ t_medida_sensor* criar_medida_sensor(int tipo, union u_medida medida, int hora, 
     return novo;
 }
 
+long int criar_chave(t_medida_sensor *m){
+    long int chave = m->tipo*pow(10,6)+m->hora*pow(10,4)+m->min*pow(10,2)+m->seg*pow(10,0);
+    // printf("%ld %d %d:%d:%d\n", chave, m->tipo, m->hora, m->min, m->seg);
+
+    return chave;
+}
+
+
+int comparar_medida_sensor(t_medida_sensor *m1, t_medida_sensor* m2){
+    long int m1_chave = criar_chave(m1);
+    long int m2_chave = criar_chave(m2);
+
+    printf("%ld %ld\n", m1_chave, m2_chave);
+    if (m1_chave == m2_chave){
+        return 0;
+    }else if( m1_chave > m2_chave){
+        return 1;
+    }else{
+        return -1;
+    }
+}
+
 void mostrar_medida_sensor(t_medida_sensor *m){
+    /*
     printf("%d ", m->tipo);
     if (m->tipo==1)
         printf("%.3lf",m->medida.temperatura);
@@ -49,22 +72,18 @@ void mostrar_medida_sensor(t_medida_sensor *m){
     }else{
         printf("%d", m->medida.umidade);
     }
-    printf(" %02d:%02d:%02d\n", m->hora, m->min, m->seg);
+    */
+    printf("%02d:%02d:%02d\n", m->hora, m->min, m->seg);
 }
 
-long int criar_chave(t_medida_sensor *m){
-    long int chave = m->tipo*pow(10,6)+m->hora*pow(10,4)+m->min*pow(10,2)+m->seg*pow(10,0);
-    //printf("%ld %d %d:%d:%d\n", chave, m->tipo, m->hora, m->min, m->seg);
-
-    return chave;
-}
-
-int main(){
+int main()
+{
     int sensor, hora, min, seg;
     union u_medida medida;
-    int tamanho = 900;
+    int tamanho = 5;
+    t_medida_sensor* ultimo;
 
-    t_dd* medidas = criar_dd();
+    t_abb* medidas = criar_abb(mostrar_medida_sensor, comparar_medida_sensor);
 
     for(int i=1;i<=tamanho;i++){
         scanf("%d", &sensor);
@@ -80,22 +99,33 @@ int main(){
         scanf("%d:%d:%d", &hora, &min, &seg);
 
         t_medida_sensor *novo = criar_medida_sensor(sensor,medida,hora,min,seg);
-        long int chave = criar_chave(novo);
+        //long int chave = criar_chave(novo);
 
-        t_medida_sensor* recuperado = buscar_dd(medidas,chave);
-
-        if (recuperado == NULL){
-            inserir_dd(medidas,chave,novo);
-        }else{
-            // tratar a repetição
-            // calcular um valor medio para a referida medição.
-            // media simples, media ponderada, Media ponderada exponencial
-            // Possível alterar a representação das medidas
-        }
-        recuperado = buscar_dd(medidas,chave);
-
-       printf("%d ", i); mostrar_medida_sensor(recuperado);
+        inserir_abb(medidas, novo);
+        ultimo = novo;
     }
-    stats_dd(medidas);
+    mostrar_abb(medidas);
+    t_medida_sensor buscado = (t_medida_sensor){.tipo = ultimo -> tipo, .hora = ultimo -> hora, .min = ultimo -> min, .seg = 0};
+   // t_medida_sensor* m = buscar_abb(medidas, ultimo);
+    remover_abb(medidas, &buscado);
+    printf("Removendo--------\n");
+    mostrar_abb(medidas);
+    /*
+    if (m != NULL)
+    {
+        printf("buscado: ");
+        mostrar_medida_sensor(m);
+    }
+    else
+    {
+        printf("Não encontrado");
+        mostrar_medida_sensor(ultimo);
+    }
+    mostrar_medida_sensor(buscar_abb(medidas, ultimo));
+    */
+
+    printf("altura: %d\n", altura_abb(medidas) );
+    printf("tamanho: %d\n", tamanho_abb(medidas));
+    printf("FIM\n");
 
 }
