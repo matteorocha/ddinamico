@@ -15,7 +15,6 @@ t_elemento_lse* criar_elemento_lse(void* carga_util){
     novo->carga_util = carga_util;
     novo->prox = NULL;
 
-    //printf("Criando: %p %p %p\n", novo, novo->carga_util, novo->prox);
 
     return novo;
 }
@@ -70,7 +69,7 @@ void inserir_final_lse(t_lse* lse, void* carga_util){
     if (lse->inicio == NULL){
         lse->inicio = lse->fim = novo;
     }else{
-       lse->fim->prox = novo;
+        lse->fim->prox = novo;
         lse->fim = novo;
     }
     lse->tamanho++;
@@ -92,18 +91,16 @@ void destruir_lse(t_lse* lse){
     t_elemento_lse* elem = lse->inicio;
     while(elem!=NULL){
         t_elemento_lse* proximo = elem->prox;
-        //destruir_elem_lse(elem->carga);
         free(elem->carga_util);
         free(elem);
         elem = proximo;
     } 
 }
 
- void* remover_inicio_lse(t_lse* lse){
-   void* carga = NULL;
+void* remover_inicio_lse(t_lse* lse){
+    void* carga = NULL;
     if(lse->inicio != NULL){
         t_elemento_lse* proximo = lse->inicio->prox;
-
         carga = lse->inicio->carga_util;
         free(lse->inicio);
         lse->tamanho--;
@@ -115,17 +112,17 @@ void destruir_lse(t_lse* lse){
     return carga;
 }
 
-// void* remover_final_lse(t_lse* lse){
 
-// }
-
-void* buscar_lse(t_lse *lse, void* buscado){
+void* buscar_lse(t_lse *lse, void* buscado, int* comparacoes){
     t_elemento_lse *cam = lse->inicio;
-    short achei = 0; // falso
+    short achei = 0; 
     while( (cam != NULL) && (!achei) ){
-        //printf("%p\n", cam->carga_util);
+        
+        // Instrumentação de Software: Conta a comparação!
+        if (comparacoes != NULL) (*comparacoes)++; 
+
         if (lse->comparador(cam->carga_util,buscado)==0){
-            achei=1; //verdade
+            achei=1; 
         }else{
             cam = cam->prox;
         }
@@ -134,7 +131,6 @@ void* buscar_lse(t_lse *lse, void* buscado){
         return cam->carga_util;
     else
         return NULL;
-    
 }
 
 void inserir_ordenado_lse(t_lse* lse, void* carga){
@@ -144,11 +140,7 @@ void inserir_ordenado_lse(t_lse* lse, void* carga){
     }else{
         t_elemento_lse *ant = NULL; // ANTerior
         t_elemento_lse *cam = lse->inicio; // CAMinhador
-        // 5 8 10 15 ---> 14
-        // > 0 ---> carga_da_lista > carga_nova
-        // = 0 ---> carga_da_lista = carga_nova
-        // < 0 ---> carga_da_lista < carga_nova
-        //while(cam!=NULL) && (cam->nome < carga_nova->nome)
+
         while((cam!=NULL) && (lse->comparador(cam->carga_util, carga)<=0)){
             ant = cam;
             cam = cam->prox;
@@ -167,16 +159,25 @@ void inserir_ordenado_lse(t_lse* lse, void* carga){
     lse->tamanho++;
 }
 
-void* remover_conteudo_lse(t_lse* lse, void* removivel){
+void* remover_conteudo_lse(t_lse* lse, void* removivel, int* comparacoes){
     void* carga = NULL; // referência para a carga_util
     t_elemento_lse *ant = NULL; // ANTerior
     t_elemento_lse *cam = lse->inicio; // CAMinhador
-    while((cam!=NULL) & (lse->comparador(cam->carga_util, removivel)!=0)){
+    
+    while(cam != NULL){
+        // Instrumentação de Software: Conta a comparação imediatamente antes de comparar!
+        if (comparacoes != NULL) (*comparacoes)++;
+        
+        if (lse->comparador(cam->carga_util, removivel) == 0) {
+            break; // Achou! Sai do loop para remover.
+        }
+        
         ant = cam;
         cam = cam->prox;
     }
+    
     if (cam != NULL){ // achou
-        if (cam == lse->inicio){ // inserir no inicio
+        if (cam == lse->inicio){ // remover no inicio
             lse->inicio = cam->prox; 
             if (lse->inicio == NULL){ // era o último ?
                 lse->fim = NULL;
@@ -192,3 +193,7 @@ void* remover_conteudo_lse(t_lse* lse, void* removivel){
     }
     return carga;
 }
+int tamanho_lse(t_lse* lse){
+    return lse -> tamanho;
+}
+    
